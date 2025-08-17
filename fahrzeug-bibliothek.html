@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fahrzeugbibliothek — Race RP 4.0</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#0f1520;
+      --muted:#9fb0c2;
+      --text:#e7f0fa;
+      --accent:#4ae3ff;
+      --accent-2:#7b5cff;
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background: radial-gradient(1100px 550px at 10% -5%, rgba(124,92,255,.25), transparent 60%),
+                  radial-gradient(1000px 600px at 90% 0%, rgba(74,227,255,.18), transparent 60%),
+                  var(--bg) url('hintergrund.jpg') center/cover no-repeat fixed;
+      min-height:100vh;
+    }
+    header{
+      position:sticky; top:0; z-index:40; backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(7,10,14,.75), rgba(7,10,14,.35));
+      border-bottom:1px solid rgba(255,255,255,.08);
+      display:flex; align-items:center; gap:14px; padding:12px 18px;
+    }
+    header img{height:40px}
+    header a{color:var(--text); text-decoration:none; font-weight:700}
+    main{max-width:1100px; margin:0 auto; padding:26px 18px 60px}
+    h1{margin:8px 0 6px}
+    p.lead{color:var(--muted); margin:0 0 18px}
+
+    .toolbar{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin:10px 0 18px
+    }
+    .input, .select{
+      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+      color:var(--text); padding:10px 12px; border-radius:12px; outline:none;
+      transition:border-color .2s; font-size:14px;
+    }
+    .input:focus, .select:focus{border-color:rgba(255,255,255,.25)}
+    .grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:16px}
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius); padding:16px;
+      transition: transform .2s ease, border-color .2s ease;
+    }
+    .card:hover{transform:translateY(-4px); border-color: rgba(255,255,255,.16)}
+    .chip{font-size:11px; padding:5px 9px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1)}
+    .muted{color:var(--muted)}
+    .back{margin-left:auto; padding:9px 12px; border-radius:12px; background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#001018; font-weight:800}
+    footer{color:var(--muted); text-align:center; padding:30px 0 50px}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" title="Zurück">
+      <img src="esxlogo.png" alt="Logo">
+    </a>
+    <a href="index.html">Race RP 4.0</a>
+    <a class="back" href="index.html#scripts">Zurück</a>
+  </header>
+  <main>
+    <h1>Fahrzeugbibliothek</h1>
+    <p class="lead">Suche nach Namen, Kategorie oder Stichwort. Kategorien lassen sich zusätzlich filtern.</p>
+
+    <div class="toolbar">
+      <input id="search" class="input" placeholder="Suche: z. B. 'Porsche', 'LKW', 'Hyper'…">
+      <select id="filter" class="select">
+        <option value="all">Alle Kategorien</option>
+        <option value="Sport">Sport</option>
+        <option value="Super">Supersport</option>
+        <option value="LKW">LKW</option>
+      </select>
+    </div>
+
+    <div id="list" class="grid" aria-live="polite"></div>
+  </main>
+  <footer>© <span id="year"></span> Race RP 4.0</footer>
+
+  <script>
+    const data = [
+      {name:"Porsche 911", cat:"Sport", note:"992 Carrera S"},
+      {name:"Ferrari F8 Tributo", cat:"Sport", note:"V8 Biturbo"},
+      {name:"Lamborghini Huracán", cat:"Sport", note:"EVO RWD"},
+      {name:"Bugatti Chiron", cat:"Super", note:"W16"},
+      {name:"McLaren P1", cat:"Super", note:"Hybrid"},
+      {name:"Koenigsegg Agera RS", cat:"Super", note:"V8 Twin‑Turbo"},
+      {name:"Mercedes‑Benz Actros", cat:"LKW", note:"Sattelzugmaschine"},
+      {name:"MAN TGX", cat:"LKW", note:"Euro 6"},
+      {name:"Scania R‑Serie", cat:"LKW", note:"V8"}
+    ];
+    const list = document.getElementById('list');
+    const search = document.getElementById('search');
+    const filter = document.getElementById('filter');
+    const year = document.getElementById('year');
+
+    year.textContent = new Date().getFullYear();
+
+    function render(){
+      const q = search.value.trim().toLowerCase();
+      const f = filter.value;
+      list.innerHTML = "";
+      const items = data.filter(v => {
+        const hit = (v.name + " " + v.cat + " " + (v.note||"")).toLowerCase().includes(q);
+        const catOk = f === "all" || v.cat === f;
+        return hit && catOk;
+      });
+      if(items.length === 0){
+        list.innerHTML = '<div class="muted" style="grid-column:1/-1">Keine Treffer.</div>';
+        return;
+      }
+      for(const v of items){
+        const el = document.createElement('article');
+        el.className = 'card';
+        el.innerHTML = `
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px">
+            <h3 style="margin:0; font-size:18px">${v.name}</h3>
+            <span class="chip">${v.cat}</span>
+          </div>
+          ${v.note ? `<p class="muted" style="margin:8px 0 0">${v.note}</p>` : ""}
+        `;
+        list.appendChild(el);
+      }
+    }
+    render();
+    search.addEventListener('input', render);
+    filter.addEventListener('change', render);
+  </script>
+</body>
+</html>

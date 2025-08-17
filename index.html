@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Race RP 4.0 — Roleplay Server</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <meta name="color-scheme" content="dark light">
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --card:#0f1520;
+      --muted:#9fb0c2;
+      --text:#e7f0fa;
+      --accent:#4ae3ff;
+      --accent-2:#7b5cff;
+      --glass:rgba(255,255,255,.06);
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html,body{position:relative;margin:0}
+    body{position:relative;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 15% -10%, rgba(124,92,255,.25), transparent 60%),
+                  radial-gradient(900px 500px at 85% 0%, rgba(74,227,255,.18), transparent 60%),
+                  var(--bg) url('hintergrund.jpg') center/cover no-repeat fixed;
+      min-height:100vh;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    a{color:inherit; text-decoration:none}
+    .nav{
+      position:fixed; top:0; left:0; right:0; z-index:50;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 22px;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(7,10,14,.7), rgba(7,10,14,.35));
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .brand{display:flex; align-items:center; gap:12px; font-weight:800; letter-spacing:.4px}
+    .brand img{height:42px; width:auto; filter: drop-shadow(0 2px 10px rgba(0,0,0,.4));}
+    .brand span{font-size:18px}
+    .navlinks{display:flex; gap:18px; align-items:center}
+    .navlinks a{
+      padding:8px 10px; border-radius:12px; font-weight:600; font-size:14px; opacity:.9;
+      position:relative;
+    }
+    .navlinks a:after{
+      content:""; position:absolute; left:10px; right:10px; bottom:6px; height:2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border-radius:2px; transform:scaleX(0); transform-origin:left; transition:.35s;
+    }
+    .navlinks a:hover:after{transform:scaleX(1)}
+    .cta{
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color:#001018; font-weight:800;
+      padding:10px 16px; border-radius:14px; box-shadow: var(--shadow);
+      transition: transform .18s ease;
+    }
+    .cta:hover{transform:translateY(-1px)}
+    main{padding-top:84px}
+    /* hero */
+    .hero{
+      position:relative; display:grid; place-items:center; text-align:center;
+      padding:96px 18px 70px;
+    }
+    .hero::before{display:none; /* overlay now global */
+      
+      content:""; position:absolute; inset:0;
+      background: radial-gradient(800px 400px at 50% 10%, rgba(0,0,0,.3), rgba(0,0,0,.65));
+      pointer-events:none;
+    }
+    .title{
+      font-size: clamp(30px, 6vw, 56px);
+      line-height:1.05; margin:0;
+      text-shadow: 0 6px 28px rgba(0,0,0,.45);
+    }
+    .subtitle{
+      font-size: clamp(16px, 2.5vw, 20px);
+      color:var(--muted); margin:14px auto 24px; max-width:900px;
+    }
+    .badges{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:18px 0 8px;
+    }
+    .badge{
+      padding:8px 12px; border-radius:999px; font-size:12px; font-weight:700;
+      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+    }
+    .scroll-indicator{margin-top:34px; font-size:12px; color:var(--muted); opacity:.8}
+    /* sections */
+    .section{padding:56px 18px}
+    .container{max-width:1100px; margin:0 auto}
+    .grid{display:grid; gap:22px}
+    .features{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+    .card{
+      position:relative; background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); padding:20px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transition: transform .25s ease, border-color .25s ease;
+    }
+    .card:hover{transform:translateY(-4px); border-color: rgba(255,255,255,.16)}
+    .card h3{margin:4px 0 8px; font-size:18px}
+    .card p{margin:0; color:var(--muted)}
+    .icon{
+      width:42px; height:42px; border-radius:12px;
+      background: linear-gradient(135deg, rgba(74,227,255,.25), rgba(123,92,255,.25));
+      display:grid; place-items:center; font-weight:900;
+      border:1px solid rgba(255,255,255,.14);
+    }
+    /* reveal animation */
+    .reveal{opacity:0; transform: translateY(22px) scale(.98); transition: all .7s cubic-bezier(.2,.8,.2,1)}
+    .reveal.show{opacity:1; transform:none}
+    /* scripts showcase */
+    .scripts{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+    .script-item h4{margin:10px 0 6px}
+    .script-tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+    .tag{font-size:11px; padding:5px 9px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1)}
+    /* footer */
+    footer{
+      padding:32px 18px 60px; color:var(--muted); text-align:center;
+      border-top:1px solid rgba(255,255,255,.08);
+      background:linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,.4));
+    }
+    .links{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:10px}
+    /* responsive tweaks */
+    @media (max-width:520px){
+      .navlinks{gap:10px}
+      .navlinks a{font-size:13px}
+      .brand span{display:none}
+    }
+  
+    /* global overlay extends the top hero vibe across the full page */
+    .global-overlay{
+      position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(1200px 700px at 50% -10%, rgba(0,0,0,.45), rgba(0,0,0,.65) 60%),
+        linear-gradient(180deg, rgba(0,0,0,.25), rgba(0,0,0,0) 35%, rgba(0,0,0,.18) 70%, rgba(0,0,0,.42));
+      mix-blend-mode: normal;
+    }
+    .nav, main, footer{ position:relative; z-index:1 }
+
+  </style>
+</head>
+<body>
+  <div class="global-overlay" aria-hidden="true"></div>
+  <header class="nav">
+    <a class="brand" href="#top">
+      <img src="esxlogo.png" alt="Race RP Logo">
+      <span>Race RP 4.0</span>
+    </a>
+    <nav class="navlinks">
+      <a href="#features">Features</a>
+      <a href="#scripts">Scripts</a>
+      <a href="fahrzeug-bibliothek.html">Fahrzeugbibliothek</a>
+      <a class="cta" href="#" title="Discord / Whitelist">Jetzt beitreten</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <h1 class="title reveal">Willkommen bei <span style="background:linear-gradient(90deg,var(--accent),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent;">Race RP&nbsp;4.0</span></h1>
+      <p class="subtitle reveal">Ein sauber performanter FiveM-Roleplay‑Server mit <b>Custom Scripts</b>, moderner UI und einem fairen <b>Play‑to‑Progress</b> Ansatz. Keine Pay‑to‑Win‑Gimmicks – nur gutes RP und Technik, die funktioniert.</p>
+      <div class="badges reveal">
+        <span class="badge">Optimiert</span>
+        <span class="badge">Stabile Wirtschaft</span>
+        <span class="badge">Community‑Moderation</span>
+        <span class="badge">EU‑Hosting</span>
+              <span class="badge">Lore‑friendly Cars</span>
+      </div>
+      <div class="scroll-indicator">Scroll für mehr ↓</div>
+    </section>
+
+    <section id="features" class="section">
+      <div class="container grid features">
+        <article class="card reveal">
+          <div class="icon">🚓</div>
+          <h3>Saubere Performance</h3>
+          <p>Lightweight Ressourcen, optimierte NetEvents und zielgerichtete Streaming‑Assets sorgen für hohe FPS – auch in der Stadt.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon">🛠️</div>
+          <h3>Eigene Systeme</h3>
+          <p>MDT, Handy, Admin‑Tablet, Health‑Effekte, Garage‑Fixes u. v. m. – alles modular und gepflegt.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon">🎯</div>
+          <h3>Fair &amp; transparent</h3>
+          <p>Kein Echtgeld‑Vorteil. Fortschritt durch Spielzeit, Jobs und Events – nicht durch Paywalls.</p>
+        </article>
+        <article class="card reveal">
+          <div class="icon">🧩</div>
+          <h3>Aktive Entwicklung</h3>
+          <p>Kontinuierliche Updates, Bugfixes und neue Inhalte – gemeinsam mit der Community.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="scripts" class="section">
+      <div class="container">
+        <h2 class="reveal" style="margin:0 0 16px">Script‑Showcase</h2>
+        <p class="reveal" style="color:var(--muted); margin:0 0 22px">Ein Auszug der Systeme, die wir zusammen gebaut haben.</p>
+        <div class="grid scripts">
+          <article class="card script-item reveal">
+            <h4>Polizei‑MDT &amp; BOLOs</h4>
+            <p>Tabs für Akten, Haftbefehle &amp; Fahndungen mit Kennzeichen‑Suche und großem Alarm‑Banner.</p>
+            <div class="script-tags"><span class="tag">ESX</span><span class="tag">NUI</span><span class="tag">Search</span></div>
+          </article>
+          <article class="card script-item reveal">
+            <h4>Handy (F1)</h4>
+            <p>Lockscreen‑Slider, Wallpaper‑Save, Messenger mit DB‑Persistenz (oxmysql) &amp; Settings‑App.</p>
+            <div class="script-tags"><span class="tag">NUI</span><span class="tag">localStorage</span><span class="tag">oxmysql</span></div>
+          </article>
+          <article class="card script-item reveal">
+            <h4>Admin‑Tablet</h4>
+            <p>Kick/Ban mit Grund, Support‑Calls (Claim &amp; TP), Welt‑Ankündigungen, elegante Start/Close‑Animation.</p>
+            <div class="script-tags"><span class="tag">ESX</span><span class="tag">UI</span><span class="tag">QoL</span></div>
+          </article>
+          <article class="card script-item reveal">
+            <h4>Health‑System</h4>
+            <p>Realistische Effekte: Herzschlag, Flackern, Tinnitus, veränderte Gangart – abhängig vom Schaden.</p>
+            <div class="script-tags"><span class="tag">Immersion</span><span class="tag">FX</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container reveal" style="text-align:center">
+        <h2>Bereit für die nächste Runde?</h2>
+        <p style="color:var(--muted); max-width:700px; margin:8px auto 18px">
+          Starte in Race RP 4.0, sichere dir deinen Charakter‑Slot und werde Teil der Community.
+        </p>
+        <a class="cta" href="#">Join &nbsp;→</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>© <span id="year"></span> Race RP 4.0 • Inoffizielle Fan‑Seite für unseren FiveM‑Server</div>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#scripts">Scripts</a>
+      <a href="fahrzeug-bibliothek.html">Fahrzeuge</a>
+    </div>
+  </footer>
+
+  <script>
+    // Intersection Observer: reveal on scroll
+    const io = new IntersectionObserver((entries)=>{
+      for(const e of entries){ if(e.isIntersecting){ e.target.classList.add('show'); io.unobserve(e.target); } }
+    }, {threshold: .18});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+    // year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
